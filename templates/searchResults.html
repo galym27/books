@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Search results
+{% endblock %}
+
+{% block main %}
+
+    <div>
+      <ul>
+        {% for isbn, title, author, year in allResSet %}
+        <li>
+            <a href="{{ url_for('bookhome', isbn=isbn) }}">
+             {{ isbn }}, {{ title }}, {{ author }}, {{ year }}
+            </a>
+         </li>
+        {% endfor %}
+      </ul>
+    </div>
+{% endblock %}

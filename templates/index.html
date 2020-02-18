@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Main page
+{% endblock %}
+
+{% block main %}
+<h4> Please search for the book of interest </h4>
+
+  <form action="{{ url_for('search') }}" method="post">
+
+      <div class="form-group">
+          <input class="form-control" name="isbn" placeholder="ISBN number of the book">
+      </div>
+      <div class="form-group">
+          <input class="form-control" name="title" placeholder="Title of the book">
+      </div>
+      <div class="form-group">
+          <input class="form-control" name="author" placeholder="Author's name">
+      </div>
+
+      <div class="form-group">
+          <button class="btn btn-primary">Search</button>
+      </div>
+
+  </form>
+
+{% endblock %}
+

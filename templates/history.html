@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Account summary
+{% endblock %}
+
+{% block main %}
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">Symbol</th>
+          <th scope="col">Company name</th>
+          <th scope="col">Shares</th>
+          <th scope="col">Price</th>
+          <th scope="col">Current price</th>
+          <th scope="col">Total for transaction</th>
+          <th scope="col">Transaction type</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for index in range(length) %}
+        <tr>
+            <td>{{ dates[index] }}</td>
+            <td>{{ symbols[index] }}</td>
+            <td>{{ compNames[index] }}</td>
+            <td>{{ shares[index] }}</td>
+            <td>{{ oldPrices[index] }}</td>
+            <td>{{ curPrices[index] }}</td>
+            <td>{{ payments[index] }}</td>
+            <td>{{ transTypes[index] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+{% endblock %}

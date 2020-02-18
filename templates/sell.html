@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+
+{% block main %}
+
+    <!-- http://getbootstrap.com/docs/4.1/content/typography/ -->
+    <h2 class="mb-3">Sell stocks</h2>
+
+    <!-- http://getbootstrap.com/docs/4.1/components/forms/ -->
+    <form action="/sell" method="post">
+
+        Select stocks you would like to sell
+        <br>
+        <br>
+        <select name="symbol">
+            <option disabled selected value="">Choose stock symbol</option>
+            {% for symb in symbols %}
+            <option value= "{{ symb }}" > {{ symb }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <br>
+        <div class="form-group">
+            <input autocomplete="off" class="form-control" name="shares" placeholder="Amount of shares to sell" type="text">
+        </div>
+
+
+        <!-- http://getbootstrap.com/docs/4.1/components/buttons/ -->
+        <br>
+        <button class="btn btn-primary" type="submit">Submit</button>
+
+    </form>
+
+    <script>
+        document.querySelector('form').onsubmit = function() {
+            if (!document.querySelector('input[name="firstname"]').value) {
+                alert('You must provide your first name!');
+                return false;
+            }
+            else if (!document.querySelector('input[name="lastname"]').value) {
+                alert('You must provide your last name!');
+                return false;
+            }
+            else if (!document.querySelector('input[name="gender"]').value) {
+                alert('You must provide your gender!');
+                return false;
+            }
+            else if (!document.querySelector('select[name="age"]').value) {
+                alert('You must provide your age range!');
+                return false;
+            }
+            else if (!document.querySelector('select[name="birthplace"]').value) {
+                alert('You must provide your place of birth!');
+                return false;
+            }
+            else if (document.querySelector('input[name="tohalek"]').value=="no" && document.querySelector('input[name="alton"]').value =="no") {
+                alert('You must choose at least one person!');
+                return false;
+            }
+            else    {
+                return true;
+            }
+        };
+    </script>
+
+{% endblock %}

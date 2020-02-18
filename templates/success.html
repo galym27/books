@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Apology
+{% endblock %}
+
+{% block main %}
+    SUCCESS
+    <!--<img alt="{{ top }}" class="border" src="http://memegen.link/custom/{{ top | urlencode }}/{{ bottom | urlencode }}.jpg?alt=https://i.imgur.com/CsCgN7Ll.png" title="{{ top }}">-->
+    <div>
+    {% for row in alldata %}
+        <div>{{row}}</div>
+    {% endfor %}
+    </div>
+
+
+    <!--<div>-->
+    <!--    {{ username }}-->
+    <!--</div>-->
+    <!--<div>-->
+    <!--    {{ password }}-->
+    <!--</div>-->
+{% endblock %}
