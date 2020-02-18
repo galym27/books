@@ -20,8 +20,8 @@ Session(app)
 
 
 # Choose local or aws database
-localDB = True
-awsDB = False
+localDB = False
+awsDB = True
 
 #   TODO: the following
 #   - check what's inside the aws db (which tables)
