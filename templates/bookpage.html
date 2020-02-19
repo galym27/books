@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Main page
+{% endblock %}
+
+{% block main %}
+<h2> Information about the book "{{ title }}" </h2>
+  <div class="container-fluid pt-3 my-0 bg-dark text-white text-center">
+  <h4>{{ bookTitle }}</h4> <br>
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="card bg-secondary text-white border-light" style="width:100%">
+          <div class="card-body">
+            <h4 class="card-title">Title: {{ title }}</h4>
+            <p class="card-text"> Author: {{ author }}</p>
+            <p class="card-text"> Published: {{ published }}</p>
+            <p class="card-text"> ISBN: {{ isbn }}</p>
+            <p class="card-text"> Average score: </p>
+            <p class="card-text"> GoodReads score: SCORE (XXX votes)</p>
+          </div>
+       </div>
+       <br><br>
+      </div>
+      <div class="col-sm-6">
+        <div class="card bg-secondary text-white border-light" style="width:100%">
+          <div class="card-body">
+            <h4 class="card-title">Post your review</h4>
+            <form action="/postcomment" method="post">
+                <div class="form-group">
+                    <input autocomplete="off" autofocus class="form-control" name="score" placeholder="score" type="text">
+                </div>
+                <div class="form-group">
+                    <textarea name = "comment" placeholder = "Message" rows="5"></textarea>
+                </div>
+                <button class="btn btn-primary" type="submit">Post Review</button>
+            </form>
+          </div>
+         </div>
+      </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="card bg-secondary text-white border-light" style="width:100%">
+          <div class="card-body">
+            <h4 class="card-title">Reviews</h4>
+            <p class="card-text">{{ score }}</p>
+            <p class="card-text">{{ comment }}</p>
+            <p class="card-text">{{ username }}</p>
+            <p class="card-text">{{ datetime }}</p>
+          </div>
+         </div>
+      </div>
+
+{% endblock %}
+

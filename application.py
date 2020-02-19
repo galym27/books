@@ -108,13 +108,34 @@ def bookhome(isbn):
 #   Query your own database for all information about the selected book
     Query1 = f"SELECT * FROM books WHERE isbn='{isbn}'"
     isbnRes = db.execute(Query1).fetchall()
+
 #    Query www.GoodReads.com for their data
-    goodReads = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "2aMU57awaj0ro5no3LOIA", "isbns": isbn})
-    goodReadsData = goodReads.json()
+#    goodReads = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "2aMU57awaj0ro5no3LOIA", "isbns": isbn})
+#    goodReadsData = goodReads.json()
+#    return f"great {goodReadsData} <div> {isbnRes}  </div>!!"
+    title = isbnRes[0]["booktitle"]
+    author = isbnRes[0]["author"]
+    published = isbnRes[0]["publishyear"]
+#    Get the reviews from the db
+    reviews = db.execute("SELECT * FROM reviews WHERE isbn=:a", {"a": isbn}).fetchall()
+#    Need to make a class for a review, then store all comments in a list of objects
+    score = []
+    comment = []
+    username = []
+    datetime = []
+    for j in range(len(reviews)):
+        score.append(reviews[j]["score"])
+        comment.append(reviews[j]["comment"])
+        username.append(reviews[j]["username"])
+        datetime.append(reviews[j]["datetime"])
+#    print(reviews[1].items())    
     if(awsDB==True):
         db.close()
         print("connection is closed")
-    return f"great {goodReadsData} <div> {isbnRes}  </div>!!"
+    
+    return render_template("bookpage.html", isbn=isbn, title=title, author=author,
+                           published=published, score=score, comment=comment,
+                           username=username, datetime=datetime)
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -188,7 +209,7 @@ def logout():
 
     # Redirect user to login form
 #    return redirect("/")
-    return "you've logged out"
+    return redirect("/login")
 
 if __name__ == '__main__':
     app.run()
