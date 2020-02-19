@@ -14,13 +14,18 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 # Set up cloud database
-engine = create_engine("postgres://tfzyvtzbqytdic:e10db1d4ab1e718636c9b39d96a13e0fdf6d5899a010048d5bf9f888a4edaa03@ec2-35-168-54-239.compute-1.amazonaws.com:5432/d5crvtkunaf7r0")
+engine = create_engine("postgres://olrvtxrbdmymxq:2918611898cb3d3600c9a0e21f6c271d3728edfdc6a576e57a90c22affc84cc7@ec2-50-17-178-87.compute-1.amazonaws.com:5432/d6oo9lqp6d2j16")
 db = scoped_session(sessionmaker(bind=engine))
 
 # Set up local database
 #conn = sqlite3.connect("localDBusers2.db", check_same_thread=False)
 #db = conn.cursor()
 
+#def connCheck():
+#    status = db.execute("SELECT * FROM pg_stat_activity WHERE datname = 'mydatabasename'")
+#    print(status.fetchall())
+#    db.close()
+    
 def create_table():
     # Create table for importing book info
     db.execute("CREATE TABLE books (isbn VARCHAR PRIMARY KEY NOT NULL, BookTitle VARCHAR NOT NULL, author VARCHAR NOT NULL, publishYear INTEGER)")
@@ -45,7 +50,8 @@ def check_db():
     db.close()
     
 # Run selected functions:
+#connCheck()
 #create_table()
 #import_data()
-check_db()
+#check_db()
     

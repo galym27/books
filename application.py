@@ -33,7 +33,7 @@ if (localDB == True):
     conn = sqlite3.connect("localDBusers2.db", check_same_thread=False)
     db = conn.cursor()
 elif (awsDB==True):
-    engine = create_engine("postgres://tfzyvtzbqytdic:e10db1d4ab1e718636c9b39d96a13e0fdf6d5899a010048d5bf9f888a4edaa03@ec2-35-168-54-239.compute-1.amazonaws.com:5432/d5crvtkunaf7r0")
+    engine = create_engine("postgres://olrvtxrbdmymxq:2918611898cb3d3600c9a0e21f6c271d3728edfdc6a576e57a90c22affc84cc7@ec2-50-17-178-87.compute-1.amazonaws.com:5432/d6oo9lqp6d2j16")
     db = scoped_session(sessionmaker(bind=engine))
 
 
@@ -50,7 +50,7 @@ def index():
 #    return f"<h4> your user id is {sessID} </h4>"
     return render_template("index.html")    
 
-@app.route("/seacrhing", methods = ["POST"])
+@app.route("/searching", methods = ["POST"])
 @login_required
 def search():
     isbn = request.form.get("isbn")
@@ -63,16 +63,37 @@ def search():
     isbnRes = db.execute(Query1).fetchall()
     titleRes = db.execute(Query2).fetchall()
     authorRes = db.execute(Query3).fetchall()
+    tableKeys = ['isbn', 'booktitle', 'author', 'publishyear']
     allRes = []
-    for i in range(len(isbnRes)):
-        allRes.append(isbnRes[i])
-    for i in range(len(titleRes)):
-        allRes.append(titleRes[i])
+    allResSet = set()
     for i in range(len(authorRes)):
-        allRes.append(authorRes[i])
+        allRes.append(tuple(authorRes[i]))
+    for i in range(len(isbnRes)):
+        allRes.append(tuple(isbnRes[i]))
+    for i in range(len(titleRes)):
+        allRes.append(tuple(titleRes[i]))
     allResSet = set(allRes)
+
+#             for index in range(len(tableKeys)):
+#            print(authorRes[i][tableKeys[index]])
+#    for row in authorRes:
+#        allResSet.add(row)
+#        print(allResSet)
+#    for i in range(len(isbnRes)):
+#        allRes.append(list(isbnRes[i]))
+#    for i in range(len(titleRes)):
+#        allRes.append(list(titleRes[i]))
+#    for i in range(len(authorRes)):
+#        allRes.append(list(authorRes[i]))
+#    for i in range(len(allRes)):
+#        allRes2.append(allRes[i])
+#    print(allRes2)
+#    print(allRes)
+#    print(allRes)
+#    allResSet = set(allRes)
     if(awsDB==True):
         db.close()
+        print("connection is closed")
 
 #    return f"AUTHOR: {authorRes} <br> TITLE: {titleRes} <br> ISBN: {isbnRes} <br> ---ALL {allResSet} "    
     return render_template("searchResults.html", allResSet=allResSet)
@@ -85,16 +106,15 @@ def bookhome(isbn):
     
 #    Make a JOIN request for the book info (general info + reviews)
 #   Query your own database for all information about the selected book
-    Query1 = f"SELECT * FROM books WHERE isbn LIKE '%{isbn}%'"
+    Query1 = f"SELECT * FROM books WHERE isbn='{isbn}'"
     isbnRes = db.execute(Query1).fetchall()
 #    Query www.GoodReads.com for their data
     goodReads = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "2aMU57awaj0ro5no3LOIA", "isbns": isbn})
     goodReadsData = goodReads.json()
-
     if(awsDB==True):
         db.close()
-    
-    return f"great {goodReadsData}!!"
+        print("connection is closed")
+    return f"great {goodReadsData} <div> {isbnRes}  </div>!!"
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -125,6 +145,7 @@ def register():
         check = db.execute("SELECT* FROM users").fetchall()
         if(awsDB==True):
             db.close()
+            print("connection is closed")
         return redirect("/login")
 
 @app.route("/login", methods=["GET", "POST"])
@@ -144,17 +165,20 @@ def login():
         if(len(passCheck)==0):
             if(awsDB==True):
                 db.close()
+                print("connection is closed")
             return "no such username exists or password is wrong"
 ##       Check the password
         if(password==passCheck[0][0]):
             if(awsDB==True):
                 db.close()
+                print("connection is closed")
             session["user_id"] = username
 #            return f"success: {password} is the same as {passCheck[0][0]}"
             return redirect("/")
         else:
             if(awsDB==True):
                 db.close()
+                print("connection is closed")
             return "wrong password"
 
 @app.route("/logout", methods=["GET", "POST"])
