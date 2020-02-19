@@ -1,5 +1,6 @@
 import os
 import sqlite3
+import datetime
 from flask import Flask, flash, jsonify, redirect, render_template, request, session
 from flask_session import Session
 from sqlalchemy import create_engine
@@ -136,6 +137,20 @@ def bookhome(isbn):
     return render_template("bookpage.html", isbn=isbn, title=title, author=author,
                            published=published, score=score, comment=comment,
                            username=username, datetime=datetime)
+
+@app.route("/postcomment", methods=["GET", "POST"])
+def save_comment():
+    score = request.form.get("score")
+    comment = request.form.get("comment")
+    userName = session["user_id"]
+    timestamp = datetime.datetime.now()
+    isbn = request.form.get("isbn")
+    print(userName)
+    db.execute("INSERT INTO reviews (isbn, score, comment, username, datetime) VALUES(:a, :b, :c, :d, :e)",
+               {"a": isbn, "b": score, "c": comment, "d": userName, "e": timestamp})
+    db.commit()
+    check = db.execute(f"SELECT* FROM reviews WHERE isbn='{isbn}'").fetchall()
+    return redirect(f"/bookpage/{isbn}")
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
