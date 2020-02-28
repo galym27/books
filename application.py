@@ -7,6 +7,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from helpers import login_required
 import requests
+import json
 
 app = Flask(__name__)
 
@@ -111,8 +112,11 @@ def bookhome(isbn):
     isbnRes = db.execute(Query1).fetchall()
 
 #    Query www.GoodReads.com for their data
-#    goodReads = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "2aMU57awaj0ro5no3LOIA", "isbns": isbn})
-#    goodReadsData = goodReads.json()
+    goodReads = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "2aMU57awaj0ro5no3LOIA", "isbns": isbn})
+    goodReadsData = goodReads.json()
+    ratingGR = goodReadsData["books"][0]["average_rating"]
+    votesGR = goodReadsData["books"][0]["work_ratings_count"]
+    print(f"this is from Good Reads: {ratingGR} and {votesGR}")
 #    return f"great {goodReadsData} <div> {isbnRes}  </div>!!"
     title = isbnRes[0]["booktitle"]
     author = isbnRes[0]["author"]
@@ -125,18 +129,23 @@ def bookhome(isbn):
     username = []
     datetime = []
     for j in range(len(reviews)):
-        score.append(reviews[j]["score"])
+        score.append(int(reviews[j]["score"]))
         comment.append(reviews[j]["comment"])
         username.append(reviews[j]["username"])
         datetime.append(reviews[j]["datetime"])
 #    print(reviews[1].items())    
+    if(len(score)>0):
+        avScore = sum(score)/len(score)
+    else:
+        avScore = "be the first to rate this book"
     if(awsDB==True):
         db.close()
         print("connection is closed")
     
     return render_template("bookpage.html", isbn=isbn, title=title, author=author,
-                           published=published, score=score, comment=comment,
-                           username=username, datetime=datetime)
+                           published=published, score=avScore, comment=comment,
+                           username=username, datetime=datetime, length=len(comment),
+                           ratingGR=ratingGR, votesGR=votesGR)
 
 @app.route("/postcomment", methods=["GET", "POST"])
 def save_comment():
@@ -145,12 +154,57 @@ def save_comment():
     userName = session["user_id"]
     timestamp = datetime.datetime.now()
     isbn = request.form.get("isbn")
-    print(userName)
+#    print(userName)
+    check = db.execute(f"SELECT* FROM reviews WHERE isbn='{isbn}'").fetchall()
+    usersForBook = []
+    for index in range(len(check)):
+        usersForBook.append((check[index]["username"]))
+    if(userName in usersForBook):
+        db.close()
+        return f"you've already rated this book <a href='/bookpage/{isbn}'>go back</a>"
     db.execute("INSERT INTO reviews (isbn, score, comment, username, datetime) VALUES(:a, :b, :c, :d, :e)",
                {"a": isbn, "b": score, "c": comment, "d": userName, "e": timestamp})
     db.commit()
-    check = db.execute(f"SELECT* FROM reviews WHERE isbn='{isbn}'").fetchall()
     return redirect(f"/bookpage/{isbn}")
+
+@app.route("/api/<isbn>", methods=["GET"])
+def api_provide(isbn):
+    reviewCount = db.execute("SELECT isbn, score, COUNT(*) FROM reviews GROUP BY score, isbn").fetchall()
+#    check if isbn is in the list of books with reveiws, if not, put zero reviews
+    """book’s title, author, publication date, ISBN number, review count, and average score."""
+    bookInfo = db.execute(f"SELECT * FROM books WHERE isbn='{isbn}'").fetchall()
+    if(not bookInfo):
+        db.close()
+        return "404 Book Not Found"
+    db.close()
+    reviewList = []
+    scores = []
+    counts = []
+    for i in range(len(reviewCount)):
+        reviewList.append(reviewCount[i]["isbn"])
+    if (isbn in reviewList):
+        for j in range(len(reviewCount)):
+            if (isbn==reviewCount[j]["isbn"]):
+                scores.append(reviewCount[j]["score"])
+                counts.append(reviewCount[j]["count"])
+        reviewCountF = sum(counts)
+        reviewCountScore = sum(scores)/reviewCountF
+    else:
+        reviewCountF = "no reviews"
+        reviewCountScore = "NA"
+    
+#    print(bookInfo[0].items())
+#    print(bookInfo[0]["isbn"])
+    bookDict = {
+    "title": bookInfo[0]["booktitle"],
+    "author": bookInfo[0]["author"],
+    "year": bookInfo[0]["publishyear"],
+    "isbn": bookInfo[0]["isbn"],
+    "review_count": reviewCountF,
+    "average_score": reviewCountScore
+    }
+    bookJson = json.dumps(bookDict, sort_keys=True, indent=4)
+    return f"{bookJson}"
 
 @app.route("/register", methods=["GET", "POST"])
 def register():

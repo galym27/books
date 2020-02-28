@@ -16,11 +16,10 @@
             <p class="card-text"> Author: {{ author }}</p>
             <p class="card-text"> Published: {{ published }}</p>
             <p class="card-text"> ISBN: {{ isbn }}</p>
-            <p class="card-text"> Average score: </p>
-            <p class="card-text"> GoodReads score: SCORE (XXX votes)</p>
+            <p class="card-text"> GoodReads average rating: {{ ratingGR }} (number of ratings:{{ votesGR }})</p>
           </div>
+          <br><br>
        </div>
-       <br><br>
       </div>
       <div class="col-sm-6">
         <div class="card bg-secondary text-white border-light" style="width:100%">
@@ -41,18 +40,26 @@
           </div>
          </div>
       </div>
+    </div>
+    <br><br>
     <div class="row">
       <div class="col-sm-12">
         <div class="card bg-secondary text-white border-light" style="width:100%">
           <div class="card-body">
             <h4 class="card-title">Reviews</h4>
-            <p class="card-text">{{ score }}</p>
-            <p class="card-text">{{ comment }}</p>
-            <p class="card-text">{{ username }}</p>
-            <p class="card-text">{{ datetime }}</p>
+            <p class="card-text"> Average rating: {{ score }}</p>
+            <br><br>
+            {% for i in range(length) %}
+            <p class="card-text">By: {{ username[i] }}</p>
+            <p class="card-text">Posted on {{ datetime[i] }}</p>
+            <p class="card-text">Review: {{ comment[i] }}</p>
+            <br><br>
+            {% endfor %}
           </div>
          </div>
       </div>
+      </div>
+      <br><br>
+      </div>
 
 {% endblock %}
-
