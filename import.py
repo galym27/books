@@ -21,16 +21,12 @@ db = scoped_session(sessionmaker(bind=engine))
 #conn = sqlite3.connect("localDBusers2.db", check_same_thread=False)
 #db = conn.cursor()
 
-#def connCheck():
-#    status = db.execute("SELECT * FROM pg_stat_activity WHERE datname = 'mydatabasename'")
-#    print(status.fetchall())
-#    db.close()
     
 def create_table():
     # Create table for importing book info
     db.execute("CREATE TABLE books (isbn VARCHAR PRIMARY KEY NOT NULL, BookTitle VARCHAR NOT NULL, author VARCHAR NOT NULL, publishYear INTEGER)")
     db.commit()
-    db.close()
+#    db.close()
 
 def import_data():
     #Import the data from books.csv
@@ -50,8 +46,7 @@ def check_db():
     db.close()
     
 # Run selected functions:
-#connCheck()
-#create_table()
-#import_data()
+create_table()
+import_data()
 #check_db()
     
