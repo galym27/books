@@ -112,12 +112,12 @@ def bookhome(isbn):
     isbnRes = db.execute(Query1).fetchall()
 
 #    Query www.GoodReads.com for their data
-    goodReads = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "2aMU57awaj0ro5no3LOIA", "isbns": isbn})
-    goodReadsData = goodReads.json()
-    ratingGR = goodReadsData["books"][0]["average_rating"]
-    votesGR = goodReadsData["books"][0]["work_ratings_count"]
-    print(f"this is from Good Reads: {ratingGR} and {votesGR}")
-#    return f"great {goodReadsData} <div> {isbnRes}  </div>!!"
+#    goodReads = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "2aMU57awaj0ro5no3LOIA", "isbns": isbn})
+#    goodReadsData = goodReads.json()
+#    ratingGR = goodReadsData["books"][0]["average_rating"]
+#    votesGR = goodReadsData["books"][0]["work_ratings_count"]
+#    print(f"this is from Good Reads: {ratingGR} and {votesGR}")
+
     title = isbnRes[0]["booktitle"]
     author = isbnRes[0]["author"]
     published = isbnRes[0]["publishyear"]
@@ -144,8 +144,8 @@ def bookhome(isbn):
     
     return render_template("bookpage.html", isbn=isbn, title=title, author=author,
                            published=published, score=avScore, comment=comment,
-                           username=username, datetime=datetime, length=len(comment),
-                           ratingGR=ratingGR, votesGR=votesGR)
+                           username=username, datetime=datetime, length=len(comment))
+#                           ratingGR=ratingGR, votesGR=votesGR)
 
 @app.route("/postcomment", methods=["GET", "POST"])
 def save_comment():
